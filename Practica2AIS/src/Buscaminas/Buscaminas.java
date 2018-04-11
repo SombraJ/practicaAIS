@@ -1,5 +1,4 @@
 package Buscaminas;
-//comentarioactualizado
 
 import java.awt.*;
 import java.awt.event.*;
