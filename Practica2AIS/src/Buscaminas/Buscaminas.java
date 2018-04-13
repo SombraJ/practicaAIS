@@ -1,5 +1,5 @@
 package Buscaminas;
-
+//PRUEBA 
 import java.awt.*;
 import java.awt.event.*;
  
@@ -28,6 +28,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
         guesses = new int [n+2][m+2];
         mines = new int[n+2][m+2];
         b = new JButton [n][m];
+       
         setLayout(new GridLayout(n,m));
         for (int y = 0;y<m+2;y++){
             mines[0][y] = 3;
@@ -69,6 +70,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
                     perm[x][y] = perimcheck(x,y);
                 }
                 b[x][y] = new JButton("?");
+               
                 b[x][y].addActionListener(this);
                 b[x][y].addMouseListener(this);
                 add(b[x][y]);
