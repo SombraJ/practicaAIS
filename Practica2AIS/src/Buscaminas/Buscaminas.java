@@ -14,6 +14,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
     int column;
     int guesses[][];
     JButton b[][];
+    
     int[][] mines;
     boolean allmines;
     int n = 30;
@@ -22,6 +23,12 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
     int deltay[] = {-1, -1, -1, 0, 0, 1, 1, 1};
     double starttime;
     double endtime;
+   JFrame frame;
+   JMenuBar menumb;
+   JMenu menu1;
+   JMenuItem reiniciar;
+    
+
     public Buscaminas(){
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         perm = new int[n][m];
@@ -29,8 +36,22 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
         guesses = new int [n+2][m+2];
         mines = new int[n+2][m+2];
         b = new JButton [n][m];
-       
-        setLayout(new GridLayout(n,m));
+      // reiniciar = new JButton("REINICIAR");
+      frame= new JFrame("BUSCAMINAS");
+      menumb = new JMenuBar();
+      menu1= new JMenu("Opciones");
+      reiniciar= new JMenuItem("Reiniciar");
+     reiniciar.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent ev) {
+            frame.dispose();
+            new Buscaminas();
+    }
+        });
+      menumb.add(menu1);
+      menu1.add(reiniciar);
+      frame.setJMenuBar(menumb);
+     
+        frame.setLayout(new GridLayout(n,m));
         for (int y = 0;y<m+2;y++){
             mines[0][y] = 3;
             mines[n+1][y] = 3;
@@ -57,7 +78,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
             for (int x = 0;x<n;x++){
                 for (int y = 0;y<m;y++){
                 if (mines[x+1][y+1] == 1){
-                        check++;
+                        check++; //TOTAL DE MINAS
                     }
                 }
             }
@@ -74,18 +95,21 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
                
                 b[x][y].addActionListener(this);
                 b[x][y].addMouseListener(this);
-                add(b[x][y]);
+                
+               frame.add(b[x][y]);
+               
                 b[x][y].setEnabled(true);
+                
             }//end inner for
         }//end for
-        pack();
-        setVisible(true);
+        frame.pack();
+        frame.setVisible(true);
         for (int y = 0;y<m+2;y++){
             for (int x = 0;x<n+2;x++){
                 System.out.print(mines[x][y]);
             }
         System.out.println("");}
-        starttime = System.nanoTime();
+        starttime = System.nanoTime(); // GUARDA TIEMPO INICIAL
     }//end constructor Mine()
  
     public void actionPerformed(ActionEvent e){
@@ -132,7 +156,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
         }
             }}
         if (check == nomines){
-            endtime = System.nanoTime();
+            endtime = System.nanoTime();// TIEMPO FINAL
             Component temporaryLostComponent = null;
             JOptionPane.showMessageDialog(temporaryLostComponent, "Congratulations you won!!! It took you "+(int)((endtime-starttime)/1000000000)+" seconds!");
         }
