@@ -2,7 +2,8 @@ package Buscaminas;
 //PRUEBA 
 import java.awt.*;
 import java.awt.event.*;
- //Prueba de Adina
+ //prueba adina
+ //comentario de segu
 import javax.swing.*;
 public class Buscaminas extends JFrame implements ActionListener, MouseListener{
     int nomines = 80;
