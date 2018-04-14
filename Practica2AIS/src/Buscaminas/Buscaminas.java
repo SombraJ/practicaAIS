@@ -27,8 +27,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
    JMenuBar menumb;
    JMenu menu1;
    JMenuItem reiniciar;
-    
-
+   
     public Buscaminas(){
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         perm = new int[n][m];
@@ -36,8 +35,9 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
         guesses = new int [n+2][m+2];
         mines = new int[n+2][m+2];
         b = new JButton [n][m];
-      // reiniciar = new JButton("REINICIAR");
+   
       frame= new JFrame("BUSCAMINAS");
+      frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
       menumb = new JMenuBar();
       menu1= new JMenu("Opciones");
       reiniciar= new JMenuItem("Reiniciar");
@@ -50,7 +50,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
       menumb.add(menu1);
       menu1.add(reiniciar);
       frame.setJMenuBar(menumb);
-     
+        
         frame.setLayout(new GridLayout(n,m));
         for (int y = 0;y<m+2;y++){
             mines[0][y] = 3;
