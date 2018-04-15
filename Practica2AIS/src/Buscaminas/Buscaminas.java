@@ -42,8 +42,9 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
         guesses = new int [n+2][m+2];
         mines = new int[n+2][m+2];
         b = new JButton [n][m];
-      // reiniciar = new JButton("REINICIAR");
+   
       frame= new JFrame("BUSCAMINAS");
+      frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
       menumb = new JMenuBar();
       menu1= new JMenu("Opciones");
       reiniciar= new JMenuItem("Reiniciar");
@@ -52,8 +53,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
      reiniciar.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent ev) {
             frame.dispose();
-            Opciones();
-            //new Buscaminas();
+            new Buscaminas(n,m,nomines);
     }
         });
      nuevoJuego.addActionListener(new ActionListener() {
@@ -68,7 +68,8 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
       menu1.add(nuevoJuego);
       frame.setJMenuBar(menumb);
      
-      frame.setLayout(new GridLayout(n,m));
+        
+        frame.setLayout(new GridLayout(n,m));
         for (int y = 0;y<m+2;y++){
             mines[0][y] = 3;
             mines[n+1][y] = 3;
@@ -242,7 +243,6 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
  				boton.addActionListener(new ActionListener() {
 
  		 			public void actionPerformed(ActionEvent e) {
- 		 				marco.dispose();
  		 				int	n = Integer.parseInt(inN.getText());
  		 				int	m = Integer.parseInt(inM.getText());
  		 				int	nomines = Integer.parseInt(inMin.getText());
