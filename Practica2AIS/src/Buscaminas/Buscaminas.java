@@ -6,7 +6,8 @@ import java.awt.event.*;
  //comentario de segu
 import javax.swing.*;
 public class Buscaminas extends JFrame implements ActionListener, MouseListener{
-    int nomines = 80;
+    //int nomines = 80;
+    int nomines;
     int perm[][];
     String tmp;
     boolean found = false;
@@ -17,8 +18,9 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
     
     int[][] mines;
     boolean allmines;
-    int n = 30;
-    int m = 30;
+    int n, m;
+    //int n = 30;
+    //int m = 30;
     int deltax[] = {-1, 0, 1, -1, 1, -1, 0, 1};
     int deltay[] = {-1, -1, -1, 0, 0, 1, 1, 1};
     double starttime;
@@ -26,10 +28,14 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
    JFrame frame;
    JMenuBar menumb;
    JMenu menu1;
-   JMenuItem reiniciar;
+   JMenuItem reiniciar,nuevoJuego;
     
 
-    public Buscaminas(){
+    public Buscaminas(int n1, int m1, int num){
+        this.n = n1;
+        this.m = m1;
+        this.nomines = num;
+        
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         perm = new int[n][m];
         boolean allmines = false;
@@ -41,17 +47,28 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
       menumb = new JMenuBar();
       menu1= new JMenu("Opciones");
       reiniciar= new JMenuItem("Reiniciar");
+      nuevoJuego = new JMenuItem("Nuevo Juego");
+      
      reiniciar.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent ev) {
             frame.dispose();
-            new Buscaminas();
+            Opciones();
+            //new Buscaminas();
     }
         });
+     nuevoJuego.addActionListener(new ActionListener() {
+ 	        public void actionPerformed(ActionEvent ev) {
+ 	            frame.dispose();
+ 	            Opciones();
+ 	    }
+ 	   });
+     
       menumb.add(menu1);
       menu1.add(reiniciar);
+      menu1.add(nuevoJuego);
       frame.setJMenuBar(menumb);
      
-        frame.setLayout(new GridLayout(n,m));
+      frame.setLayout(new GridLayout(n,m));
         for (int y = 0;y<m+2;y++){
             mines[0][y] = 3;
             mines[n+1][y] = 3;
@@ -112,6 +129,147 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
         starttime = System.nanoTime(); // GUARDA TIEMPO INICIAL
     }//end constructor Mine()
  
+        public static void Opciones() {
+ 	   
+ 	   JFrame principal = new JFrame("Buscaminas");
+
+ 	   principal.setDefaultCloseOperation(EXIT_ON_CLOSE);
+ 	   principal.setSize(30, 30);
+ 	   principal.setBounds(500, 100, 150, 5);
+ 	   
+ 	   JMenuBar menumb = new JMenuBar();
+ 	   JMenu menu1= new JMenu("Opciones");
+ 	   JMenuItem reiniciar= new JMenuItem("Reiniciar");
+ 	   JMenuItem nuevoJuego = new JMenuItem("Nuevo Juego");
+ 	   
+ 	   menumb.add(menu1);
+ 	   menu1.add(reiniciar);
+ 	   principal.setJMenuBar(menumb);
+ 	      
+ 	   nuevoJuego.addActionListener(new ActionListener() {
+ 	        public void actionPerformed(ActionEvent ev) {
+ 	            principal.dispose();
+ 	            Opciones();
+ 	    }
+ 	   });
+ 	   
+ 	   JButton principiante = new JButton("Principiante");
+ 	   
+ 	   JButton  intermedio = new JButton("Intermedio");
+ 	   JButton experto = new JButton("Experto");  
+ 	   JButton   personalizado = new JButton("Personalizado");
+ 	   
+ 	   principiante.addActionListener(new ActionListener() {
+
+ 			public void actionPerformed(ActionEvent e) {
+ 				intermedio.setSelected(false);
+ 				experto.setSelected(false);
+ 				personalizado.setSelected(false);
+ 				int n = 10;
+ 				int m = 10;
+ 				int	nomines = 10;
+ 				principal.dispose();
+ 				new Buscaminas(n,m,nomines);
+ 			}
+ 	   });
+ 	   intermedio.addActionListener(new ActionListener() {
+
+ 			public void actionPerformed(ActionEvent e) {
+ 				experto.setSelected(false);
+ 				principiante.setSelected(false);
+ 				personalizado.setSelected(false);
+ 				int	n = 16;
+ 				int	m = 16;
+ 				int	nomines = 40;
+ 				principal.dispose();
+ 				new Buscaminas(n,m,nomines);
+ 			}
+ 	   });
+ 	   experto.addActionListener(new ActionListener() {
+
+ 			public void actionPerformed(ActionEvent e) {
+ 				intermedio.setSelected(false);
+ 				principiante.setSelected(false);
+ 				personalizado.setSelected(false);
+ 				int	n = 32;
+ 				int	m = 16;
+ 				int	nomines = 99;
+ 				principal.dispose();
+ 				new Buscaminas(n,m,nomines);
+ 			}
+ 	   });
+ 	   personalizado.addActionListener(new ActionListener() {
+
+ 			public void actionPerformed(ActionEvent e) {
+ 				intermedio.setSelected(false);
+ 				principiante.setSelected(false);
+ 				experto.setSelected(false);
+ 				JFrame marco = new JFrame("Personalizado");
+ 				marco.setLayout(new GridLayout(10,10));
+
+ 				marco.setDefaultCloseOperation(EXIT_ON_CLOSE);
+ 				marco.setBounds(500, 100, 50, 10);
+ 				   
+ 				JLabel titulo = new JLabel("Inserta las medidas: ");
+ 				marco.add(titulo);
+ 				
+ 				marco.setVisible(true);
+ 				JLabel etN = new JLabel("ancho:");
+ 				etN.setSize(10,10);
+ 				marco.add(etN);
+ 				JTextField inN = new JTextField();
+ 				inN.setBounds(50,135,50,25);
+ 				marco.add(inN);
+ 				
+ 				JLabel etM = new JLabel("alto:");
+ 				etM.setSize(10,10);
+ 				marco.add(etM);
+ 				JTextField inM = new JTextField();
+ 				inM.setBounds(125,135,50,25);
+ 				marco.add(inM);
+ 				
+ 				JLabel etMi = new JLabel("minas:");
+ 				etMi.setSize(10,10);
+ 				marco.add(etMi);
+ 				JTextField inMin = new JTextField();
+ 				inMin.setBounds(200,135,50,25);
+ 				marco.add(inMin);
+ 				
+ 				JButton boton = new JButton("Aceptar");
+ 				boton.setSize(20, 20);
+
+ 				marco.add(boton);
+ 				boton.addActionListener(new ActionListener() {
+
+ 		 			public void actionPerformed(ActionEvent e) {
+ 		 				marco.dispose();
+ 		 				int	n = Integer.parseInt(inN.getText());
+ 		 				int	m = Integer.parseInt(inM.getText());
+ 		 				int	nomines = Integer.parseInt(inMin.getText());
+ 		 				marco.dispose();
+ 		 				principal.dispose();
+ 		 				new Buscaminas(n,m,nomines);
+ 		 				
+ 		 			}
+ 		 	   });
+ 				
+ 			}
+ 			});
+ 	   
+    
+ 	   GridLayout tam = new GridLayout(10,10);
+ 	   principal.setLayout(tam);
+ 	   principal.add(principiante);
+ 	   principal.add(intermedio);
+ 	   principal.add(experto);
+ 	   principal.add(personalizado);
+ 	   
+ 	   
+
+        principal.pack();
+        principal.setVisible(true);
+    }
+        
     public void actionPerformed(ActionEvent e){
         found =  false;
         JButton current = (JButton)e.getSource();
@@ -128,6 +286,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
         }
         Component temporaryLostComponent = null;
         if (b[row][column].getBackground() == Color.orange){
+            //disminuir aquí el contador de nº de minas que quedan
             return;
         }else if (mines[row+1][column+1] == 1){
                 JOptionPane.showMessageDialog(temporaryLostComponent, "You set off a Mine!!!!.");
@@ -195,7 +354,8 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
     }
  
     public static void main(String[] args){
-        new Buscaminas();
+        //new Buscaminas();
+        Opciones();
     }
  
     public void mouseClicked(MouseEvent e) {
