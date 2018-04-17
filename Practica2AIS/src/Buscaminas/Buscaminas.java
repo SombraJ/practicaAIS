@@ -316,6 +316,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
             
             return;
         }else if (mines[row+1][column+1] == 1){
+                timer.cancel();
                 JOptionPane.showMessageDialog(temporaryLostComponent, "You set off a Mine!!!!.");
                 System.exit(0);
         } else {
