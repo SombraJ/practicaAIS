@@ -1,13 +1,15 @@
 package Buscaminas;
-//PRUEBA 
+
 import java.awt.*;
 import java.awt.event.*;
- //prueba adina
- //comentario de segu
+import java.util.TimerTask;
+import java.util.Timer;
+
 import javax.swing.*;
 public class Buscaminas extends JFrame implements ActionListener, MouseListener{
-    //int nomines = 80;
+   
     int nomines;
+    int newmines;
     int perm[][];
     String tmp;
     boolean found = false;
@@ -19,6 +21,9 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
     int[][] mines;
     boolean allmines;
     int n, m;
+    int mostrartiempo;
+   Timer timer;
+    TimerTask ttask;
     //int n = 30;
     //int m = 30;
     int deltax[] = {-1, 0, 1, -1, 1, -1, 0, 1};
@@ -29,13 +34,13 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
    JMenuBar menumb;
    JMenu menu1;
    JMenuItem reiniciar,nuevoJuego;
-    
+    JLabel minas,tiempo;
 
     public Buscaminas(int n1, int m1, int num){
         this.n = n1;
         this.m = m1;
         this.nomines = num;
-        
+        mostrartiempo=-1;
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         perm = new int[n][m];
         boolean allmines = false;
@@ -49,7 +54,24 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
       menu1= new JMenu("Opciones");
       reiniciar= new JMenuItem("Reiniciar");
       nuevoJuego = new JMenuItem("Nuevo Juego");
+      newmines=nomines;
+      minas=new JLabel("Minas:"+newmines+" ");
+      tiempo=new JLabel("Tiempo:"+mostrartiempo);
+      timer=new Timer();
+      ttask = new TimerTask(){
+            @Override
+            public void run() {
+                mostrartiempo++;
+                tiempo.setText("Tiempo:"+mostrartiempo);
+            }
+          
+      };
+     
+       timer.schedule(ttask, 0,1000);
+       
       
+     
+     
      reiniciar.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent ev) {
             frame.dispose();
@@ -67,8 +89,8 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
       menu1.add(reiniciar);
       menu1.add(nuevoJuego);
       frame.setJMenuBar(menumb);
-     
-        
+      menumb.add(minas);
+       menumb.add(tiempo);
         frame.setLayout(new GridLayout(n,m));
         for (int y = 0;y<m+2;y++){
             mines[0][y] = 3;
@@ -120,12 +142,14 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
                 
             }//end inner for
         }//end for
+       
         frame.pack();
         frame.setVisible(true);
         for (int y = 0;y<m+2;y++){
             for (int x = 0;x<n+2;x++){
                 System.out.print(mines[x][y]);
             }
+           
         System.out.println("");}
         starttime = System.nanoTime(); // GUARDA TIEMPO INICIAL
     }//end constructor Mine()
@@ -192,8 +216,8 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
  				intermedio.setSelected(false);
  				principiante.setSelected(false);
  				personalizado.setSelected(false);
- 				int	n = 32;
- 				int	m = 16;
+ 				int	n = 16;
+ 				int	m = 32;
  				int	nomines = 99;
  				principal.dispose();
  				new Buscaminas(n,m,nomines);
@@ -205,6 +229,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
  				intermedio.setSelected(false);
  				principiante.setSelected(false);
  				experto.setSelected(false);
+                                principal.dispose();
  				JFrame marco = new JFrame("Personalizado");
  				marco.setLayout(new GridLayout(10,10));
 
@@ -214,15 +239,15 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
  				JLabel titulo = new JLabel("Inserta las medidas: ");
  				marco.add(titulo);
  				
- 				marco.setVisible(true);
- 				JLabel etN = new JLabel("ancho:");
+ 				
+ 				JLabel etN = new JLabel("columnas:");
  				etN.setSize(10,10);
  				marco.add(etN);
  				JTextField inN = new JTextField();
  				inN.setBounds(50,135,50,25);
  				marco.add(inN);
  				
- 				JLabel etM = new JLabel("alto:");
+ 				JLabel etM = new JLabel("filas:");
  				etM.setSize(10,10);
  				marco.add(etM);
  				JTextField inM = new JTextField();
@@ -240,6 +265,8 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
  				boton.setSize(20, 20);
 
  				marco.add(boton);
+                                marco.setVisible(true);
+                                marco.pack();
  				boton.addActionListener(new ActionListener() {
 
  		 			public void actionPerformed(ActionEvent e) {
@@ -247,8 +274,8 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
  		 				int	m = Integer.parseInt(inM.getText());
  		 				int	nomines = Integer.parseInt(inMin.getText());
  		 				marco.dispose();
- 		 				principal.dispose();
- 		 				new Buscaminas(n,m,nomines);
+ 		 				
+ 		 				new Buscaminas(m,n,nomines);
  		 				
  		 			}
  		 	   });
@@ -286,7 +313,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
         }
         Component temporaryLostComponent = null;
         if (b[row][column].getBackground() == Color.orange){
-            //disminuir aquí el contador de nº de minas que quedan
+            
             return;
         }else if (mines[row+1][column+1] == 1){
                 JOptionPane.showMessageDialog(temporaryLostComponent, "You set off a Mine!!!!.");
@@ -315,6 +342,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
         }
             }}
         if (check == nomines){
+            timer.cancel();
             endtime = System.nanoTime();// TIEMPO FINAL
             Component temporaryLostComponent = null;
             JOptionPane.showMessageDialog(temporaryLostComponent, "Congratulations you won!!! It took you "+(int)((endtime-starttime)/1000000000)+" seconds!");
@@ -392,10 +420,15 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
                 b[row][column].setText("x");
                 guesses[row+1][column+1] = 1;
                 b[row][column].setBackground(Color.orange);
+                newmines--;
+                minas.setText("Minas:"+newmines+" ");
+                
             } else if (guesses[row+1][column+1] == 1){
                 b[row][column].setText("?");
                 guesses[row+1][column+1] = 0;
                 b[row][column].setBackground(null);
+                newmines++;
+                minas.setText("Minas:"+newmines+" ");
             }
         }
     }
