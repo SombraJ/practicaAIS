@@ -2,10 +2,20 @@ package Buscaminas;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.TimerTask;
 import java.util.Timer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.*;
+import static javax.swing.JFrame.EXIT_ON_CLOSE;
 public class Buscaminas extends JFrame implements ActionListener, MouseListener{
    
     int nomines;
@@ -13,6 +23,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
     int perm[][];
     String tmp;
     boolean found = false;
+   String nivel;
     int row;
     int column;
     int guesses[][];
@@ -22,10 +33,9 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
     boolean allmines;
     int n, m;
     int mostrartiempo;
-   Timer timer;
-    TimerTask ttask;
-    //int n = 30;
-    //int m = 30;
+     Timer timer;
+     TimerTask ttask;
+   
     int deltax[] = {-1, 0, 1, -1, 1, -1, 0, 1};
     int deltay[] = {-1, -1, -1, 0, 0, 1, 1, 1};
     double starttime;
@@ -36,10 +46,11 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
    JMenuItem reiniciar,nuevoJuego;
     JLabel minas,tiempo;
 
-    public Buscaminas(int n1, int m1, int num){
+    public Buscaminas(int n1, int m1, int num, String lvl){
         this.n = n1;
         this.m = m1;
         this.nomines = num;
+        this.nivel=lvl;
         mostrartiempo=-1;
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         perm = new int[n][m];
@@ -75,7 +86,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
      reiniciar.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent ev) {
             frame.dispose();
-            new Buscaminas(n,m,nomines);
+            new Buscaminas(n,m,nomines,nivel);
     }
         });
      nuevoJuego.addActionListener(new ActionListener() {
@@ -142,9 +153,10 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
                 
             }//end inner for
         }//end for
-       
+        frame.setLocationRelativeTo(null);
         frame.pack();
         frame.setVisible(true);
+        
         for (int y = 0;y<m+2;y++){
             for (int x = 0;x<n+2;x++){
                 System.out.print(mines[x][y]);
@@ -156,12 +168,11 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
  
         public static void Opciones() {
  	   
- 	   JFrame principal = new JFrame("Buscaminas");
-
+ 	   JFrame principal = new JFrame("BUSCAMINAS");
+           principal.setLocationRelativeTo(null);
  	   principal.setDefaultCloseOperation(EXIT_ON_CLOSE);
- 	   principal.setSize(30, 30);
- 	   principal.setBounds(500, 100, 150, 5);
- 	   
+ 	  principal.setSize(350, 250);
+ 	  
  	   JMenuBar menumb = new JMenuBar();
  	   JMenu menu1= new JMenu("Opciones");
  	   JMenuItem reiniciar= new JMenuItem("Reiniciar");
@@ -170,7 +181,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
  	   menumb.add(menu1);
  	   menu1.add(reiniciar);
  	   principal.setJMenuBar(menumb);
- 	      
+ 	      menu1.add(nuevoJuego);
  	   nuevoJuego.addActionListener(new ActionListener() {
  	        public void actionPerformed(ActionEvent ev) {
  	            principal.dispose();
@@ -194,7 +205,10 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
  				int m = 10;
  				int	nomines = 10;
  				principal.dispose();
- 				new Buscaminas(n,m,nomines);
+                               
+                                
+                             Buscaminas buscaminas = new Buscaminas(n,m,nomines,"principiante");
+                             
  			}
  	   });
  	   intermedio.addActionListener(new ActionListener() {
@@ -207,7 +221,8 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
  				int	m = 16;
  				int	nomines = 40;
  				principal.dispose();
- 				new Buscaminas(n,m,nomines);
+ 				Buscaminas buscaminas = new Buscaminas(n,m,nomines,"intermedio");
+                            
  			}
  	   });
  	   experto.addActionListener(new ActionListener() {
@@ -220,7 +235,8 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
  				int	m = 32;
  				int	nomines = 99;
  				principal.dispose();
- 				new Buscaminas(n,m,nomines);
+ 				Buscaminas buscaminas = new Buscaminas(n,m,nomines,"experto");
+                            
  			}
  	   });
  	   personalizado.addActionListener(new ActionListener() {
@@ -230,11 +246,15 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
  				principiante.setSelected(false);
  				experto.setSelected(false);
                                 principal.dispose();
+                                 
  				JFrame marco = new JFrame("Personalizado");
- 				marco.setLayout(new GridLayout(10,10));
-
- 				marco.setDefaultCloseOperation(EXIT_ON_CLOSE);
- 				marco.setBounds(500, 100, 50, 10);
+                                
+                                marco.setDefaultCloseOperation(EXIT_ON_CLOSE);
+                                 marco.setSize(350, 250);
+ 				marco.setLayout(new GridLayout(8,4));
+                                 marco.setLocationRelativeTo(null);
+ 				
+ 				
  				   
  				JLabel titulo = new JLabel("Inserta las medidas: ");
  				marco.add(titulo);
@@ -262,11 +282,12 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
  				marco.add(inMin);
  				
  				JButton boton = new JButton("Aceptar");
- 				boton.setSize(20, 20);
+ 				//boton.setSize(500, 50);
 
  				marco.add(boton);
+                                
                                 marco.setVisible(true);
-                                marco.pack();
+                                //marco.pack();
  				boton.addActionListener(new ActionListener() {
 
  		 			public void actionPerformed(ActionEvent e) {
@@ -275,7 +296,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
  		 				int	nomines = Integer.parseInt(inMin.getText());
  		 				marco.dispose();
  		 				
- 		 				new Buscaminas(m,n,nomines);
+ 		 				new Buscaminas(m,n,nomines,"personalizado");
  		 				
  		 			}
  		 	   });
@@ -284,8 +305,8 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
  			});
  	   
     
- 	   GridLayout tam = new GridLayout(10,10);
- 	   principal.setLayout(tam);
+ 	  
+ 	   principal.setLayout(new GridLayout(4,1));
  	   principal.add(principiante);
  	   principal.add(intermedio);
  	   principal.add(experto);
@@ -293,7 +314,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
  	   
  	   
 
-        principal.pack();
+        //principal.pack();
         principal.setVisible(true);
     }
         
@@ -326,15 +347,23 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
             }
             b[row][column].setText(tmp);
             b[row][column].setEnabled(false);
-            checkifend();
+            try {
+                checkifend();
+            } catch (IOException ex) {
+                Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
+            }
             if (perm[row][column] == 0){
                 scan(row, column);
-                checkifend();
+                try {
+                    checkifend();
+                } catch (IOException ex) {
+                    Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
     }
  
-    public void checkifend(){
+    public void checkifend() throws IOException{
         int check= 0;
         for (int y = 0; y<m;y++){
             for (int x = 0;x<n;x++){
@@ -346,7 +375,26 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
             timer.cancel();
             endtime = System.nanoTime();// TIEMPO FINAL
             Component temporaryLostComponent = null;
-            JOptionPane.showMessageDialog(temporaryLostComponent, "Congratulations you won!!! It took you "+(int)((endtime-starttime)/1000000000)+" seconds!");
+            if(!nivel.equals("personalizado")){
+            if (checkFichero()){
+
+              String name =JOptionPane.showInputDialog(temporaryLostComponent, "Congratulations you won!!! It took you "+(int)((endtime-starttime)/1000000000)+" seconds!\n You got a new record in this level. Insert a player name if you want to save your time, press cancel if you dont want to save it.\n");
+              if(name!=null){
+                while (name.contains(" ")){
+                    name=JOptionPane.showInputDialog(temporaryLostComponent, "Congratulations you won!!! It took you "+(int)((endtime-starttime)/1000000000)+" seconds!\n You got a new record in this level. Insert a player name if you want to save your time, press cancel if you dont want to save it.\n(Whitespace are forbbiden)");
+                    if(name==null)
+                        break;
+                }
+                if(name!=null)
+                addPlayerTime(name);
+              }
+            }
+            else{
+                JOptionPane.showMessageDialog(temporaryLostComponent, "Congratulations you won!!! It took you "+(int)((endtime-starttime)/1000000000)+" seconds!");
+            }
+            }else{
+                 JOptionPane.showMessageDialog(temporaryLostComponent, "Congratulations you won!!! It took you "+(int)((endtime-starttime)/1000000000)+" seconds!");
+            }
         }
     }
  
@@ -437,5 +485,93 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
     @Override
     public void mouseReleased(MouseEvent arg0) {
         // TODO Auto-generated method stub
+    }
+
+    private boolean checkFichero() throws IOException {
+         File f;
+        
+        ArrayList<String> tiempos = new ArrayList<>();
+        String textLine;
+        if(nivel.equals("principiante")){
+        f= new File("principantes.txt");
+        f.createNewFile();
+        }else if(nivel.equals("intermedio")){
+            f= new File("intermedio.txt");
+            f.createNewFile();
+        }else{
+            f= new File("experto.txt");
+            f.createNewFile();
+        }
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(f.getAbsoluteFile()), "ISO-8859-1"));
+        while ((textLine = reader.readLine())!= null){
+        tiempos.add(textLine);
+        }
+        if(tiempos.size()<10){
+            return true;
+        }else {
+            String tiempo = tiempos.get(9);
+            String[] split = tiempo.split(" ");
+            int n = Integer.parseInt(split[1]);
+            if(mostrartiempo<n)
+                return true;
+        }
+        return false;
+    }
+
+    private void addPlayerTime(String name) throws IOException {
+        ArrayList<String> tiempos = new ArrayList<>();
+        String textLine;
+        PrintWriter writer;
+       File f;
+         if(nivel.equals("principiante")){
+             f= new File("principantes.txt");
+            
+        }else if(nivel.equals("intermedio")){
+            f= new File("intermedio.txt");
+            
+        }else{
+            f= new File("experto.txt");
+            
+        }
+        
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(f.getAbsoluteFile()), "ISO-8859-1"));
+        while ((textLine = reader.readLine())!= null){
+          
+        tiempos.add(textLine);
+        }
+        
+        for (int i=0; i<=tiempos.size();i++){
+            if(i==10)
+                break;
+            if(i==tiempos.size()){
+                tiempos.add(name+" "+mostrartiempo+" segundos");
+                break;
+            }
+             String tiempo = tiempos.get(i);
+             String[] split = tiempo.split(" ");
+             int n = Integer.parseInt(split[1]);
+                if(mostrartiempo<n){
+                    tiempos.add(i,name+" "+mostrartiempo+" segundos");
+                    if(tiempos.size()==11)
+                        tiempos.remove(10);
+                    break;
+                 }
+        }
+         if(nivel.equals("principiante")){
+            writer =new PrintWriter("principantes.txt", "UTF-8");
+            
+        }else if(nivel.equals("intermedio")){
+             writer =new PrintWriter("intermedio.txt", "UTF-8");
+            
+        }else{
+            writer =new PrintWriter("experto.txt", "UTF-8");
+            
+        }
+         
+        for(String s:tiempos){
+        writer.println(s);
+       
+        }
+        writer.close();
     }
 }//end class
