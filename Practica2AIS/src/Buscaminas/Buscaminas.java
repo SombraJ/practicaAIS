@@ -42,8 +42,8 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
     double endtime;
    JFrame frame;
    JMenuBar menumb;
-   JMenu menu1;
-   JMenuItem reiniciar,nuevoJuego;
+   JMenu menu1,records;
+   JMenuItem reiniciar,nuevoJuego,recordp,recordi,recorde;
     JLabel minas,tiempo;
 
     public Buscaminas(int n1, int m1, int num, String lvl){
@@ -65,6 +65,11 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
       menu1= new JMenu("Opciones");
       reiniciar= new JMenuItem("Reiniciar");
       nuevoJuego = new JMenuItem("Nuevo Juego");
+      records= new JMenu("Mostrar Tiempos");
+      recordp= new JMenuItem("Records Principiante");
+      recordi=new JMenuItem("Records Intermedio");
+      recorde=new JMenuItem("Records Experto");
+      
       newmines=nomines;
       minas=new JLabel("Minas:"+newmines+" ");
       tiempo=new JLabel("Tiempo:"+mostrartiempo);
@@ -89,6 +94,41 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
             new Buscaminas(n,m,nomines,nivel);
     }
         });
+     recordp.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                try {
+                    frame.dispose();
+                    JFrame f= new JFrame("TIEMPOS PRINCIPIANTE");
+                    int count=1;
+                    f.setSize(450, 250);
+                    f.setLayout(new GridLayout(11,1));
+                    File file= new File("principiante.txt");
+                    file.createNewFile();
+                    String textLine;
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file.getAbsoluteFile()), "ISO-8859-1"));
+                    while ((textLine = reader.readLine())!= null){
+                        JLabel linea= new JLabel(count+"-"+textLine);
+                        f.add(linea);
+                        count++;
+                    }
+                    JButton volver= new JButton("Volver Inicio");
+                    f.add(volver);
+                    volver.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent ae) {
+                            f.dispose();
+                            Opciones();
+                        }
+                    });
+                    f.setVisible(true);
+                    //f.pack();
+                } catch (IOException ex) {
+                    Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
+                }
+               
+            }
+        });
      nuevoJuego.addActionListener(new ActionListener() {
  	        public void actionPerformed(ActionEvent ev) {
  	            frame.dispose();
@@ -97,6 +137,8 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
  	   });
      
       menumb.add(menu1);
+      menu1.add(records);
+      records.add(recordp);
       menu1.add(reiniciar);
       menu1.add(nuevoJuego);
       frame.setJMenuBar(menumb);
@@ -177,7 +219,10 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
  	   JMenu menu1= new JMenu("Opciones");
  	   JMenuItem reiniciar= new JMenuItem("Reiniciar");
  	   JMenuItem nuevoJuego = new JMenuItem("Nuevo Juego");
- 	   
+           JMenu record = new JMenu("Records");
+           JMenuItem recordp= new JMenuItem("Tiempos Principiante");
+           menu1.add(record);
+           record.add(recordp); 	   
  	   menumb.add(menu1);
  	   menu1.add(reiniciar);
  	   principal.setJMenuBar(menumb);
@@ -188,7 +233,44 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
  	            Opciones();
  	    }
  	   });
- 	   
+ 	   recordp.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                try {
+                    principal.dispose();
+                    JFrame f= new JFrame("TIEMPOS PRINCIPIANTE");
+                    f.setSize(450, 250);
+                    int count=1;
+                     f.setLocationRelativeTo(null);
+                    f.setDefaultCloseOperation(EXIT_ON_CLOSE);
+                    f.setLayout(new GridLayout(11,1));
+                    File file= new File("principiante.txt");
+                    file.createNewFile();
+                    String textLine;
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file.getAbsoluteFile()), "ISO-8859-1"));
+                    while ((textLine = reader.readLine())!= null){
+                        JLabel linea= new JLabel(count+"-"+textLine);
+                        
+                        f.add(linea);
+                        count++;
+                    }
+                    JButton volver = new JButton("Volver Inicio");
+                    f.add(volver);
+                    volver.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent ae) {
+                            f.dispose();
+                            Opciones();
+                        }
+                    });
+                    f.setVisible(true);
+                    
+                } catch (IOException ex) {
+                    Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
+                }
+               
+            }
+        });
  	   JButton principiante = new JButton("Principiante");
  	   
  	   JButton  intermedio = new JButton("Intermedio");
@@ -493,7 +575,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
         ArrayList<String> tiempos = new ArrayList<>();
         String textLine;
         if(nivel.equals("principiante")){
-        f= new File("principantes.txt");
+        f= new File("principiante.txt");
         f.createNewFile();
         }else if(nivel.equals("intermedio")){
             f= new File("intermedio.txt");
@@ -524,7 +606,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
         PrintWriter writer;
        File f;
          if(nivel.equals("principiante")){
-             f= new File("principantes.txt");
+             f= new File("principiante.txt");
             
         }else if(nivel.equals("intermedio")){
             f= new File("intermedio.txt");
@@ -558,7 +640,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
                  }
         }
          if(nivel.equals("principiante")){
-            writer =new PrintWriter("principantes.txt", "UTF-8");
+            writer =new PrintWriter("principiante.txt", "UTF-8");
             
         }else if(nivel.equals("intermedio")){
              writer =new PrintWriter("intermedio.txt", "UTF-8");
