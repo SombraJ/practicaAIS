@@ -92,6 +92,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
         public void actionPerformed(ActionEvent ev) {
             frame.dispose();
             new Buscaminas(n,m,nomines,nivel);
+            
     }
         });
      recordp.addActionListener(new ActionListener() {
@@ -145,6 +146,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
       menumb.add(minas);
        menumb.add(tiempo);
         frame.setLayout(new GridLayout(n,m));
+        
         for (int y = 0;y<m+2;y++){
             mines[0][y] = 3;
             mines[n+1][y] = 3;
