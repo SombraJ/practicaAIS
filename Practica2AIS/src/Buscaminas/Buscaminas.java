@@ -5,9 +5,11 @@ import java.awt.event.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.TimerTask;
 import java.util.Timer;
@@ -42,8 +44,8 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
     double endtime;
    JFrame frame;
    JMenuBar menumb;
-   JMenu menu1,records;
-   JMenuItem reiniciar,nuevoJuego,recordp,recordi,recorde;
+   JMenu menu1;
+   JMenuItem reiniciar,nuevoJuego,guardar;
     JLabel minas,tiempo;
 
     public Buscaminas(int n1, int m1, int num, String lvl){
@@ -65,10 +67,8 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
       menu1= new JMenu("Opciones");
       reiniciar= new JMenuItem("Reiniciar");
       nuevoJuego = new JMenuItem("Nuevo Juego");
-      records= new JMenu("Mostrar Tiempos");
-      recordp= new JMenuItem("Records Principiante");
-      recordi=new JMenuItem("Records Intermedio");
-      recorde=new JMenuItem("Records Experto");
+      guardar = new JMenuItem("Guardar Partida");
+     
       
       newmines=nomines;
       minas=new JLabel("Minas:"+newmines+" ");
@@ -95,56 +95,61 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
             
     }
         });
-     recordp.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                try {
-                    frame.dispose();
-                    JFrame f= new JFrame("TIEMPOS PRINCIPIANTE");
-                    int count=1;
-                    f.setSize(450, 250);
-                    f.setLayout(new GridLayout(11,1));
-                    File file= new File("principiante.txt");
-                    file.createNewFile();
-                    String textLine;
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file.getAbsoluteFile()), "ISO-8859-1"));
-                    while ((textLine = reader.readLine())!= null){
-                        JLabel linea= new JLabel(count+"-"+textLine);
-                        f.add(linea);
-                        count++;
-                    }
-                    JButton volver= new JButton("Volver Inicio");
-                    f.add(volver);
-                    volver.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent ae) {
-                            f.dispose();
-                            Opciones();
-                        }
-                    });
-                    f.setVisible(true);
-                    //f.pack();
-                } catch (IOException ex) {
-                    Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
-                }
-               
-            }
-        });
+     
      nuevoJuego.addActionListener(new ActionListener() {
  	        public void actionPerformed(ActionEvent ev) {
  	            frame.dispose();
  	            Opciones();
  	    }
  	   });
-     
+     guardar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+              
+                try {
+                    File f = new File ("partida.txt");
+                    f.createNewFile();
+                    PrintWriter writer = new PrintWriter("partida.txt","UTF-8");
+                    writer.println(nomines);
+                    writer.println(newmines);
+                    writer.println(perm);
+                    writer.println(tmp);
+                    writer.println(found);
+                    writer.println(nivel);
+                    writer.println(row);
+                    writer.println(column);
+                    writer.println(guesses);
+                    writer.println(b);
+                    writer.println(mines);
+                    writer.println(n);
+                    writer.println(m);
+                    writer.println(timer);
+                    writer.println(ttask);
+                    writer.println(starttime);
+                    writer.println(endtime);
+                    writer.println(frame);
+                    writer.close();
+
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (UnsupportedEncodingException ex) {
+                    Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                   
+                    
+                
+            }
+            
+        });
       menumb.add(menu1);
-      menu1.add(records);
-      records.add(recordp);
       menu1.add(reiniciar);
       menu1.add(nuevoJuego);
       frame.setJMenuBar(menumb);
       menumb.add(minas);
        menumb.add(tiempo);
+       menu1.add(guardar);
         frame.setLayout(new GridLayout(n,m));
         
         for (int y = 0;y<m+2;y++){
@@ -219,14 +224,18 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
  	  
  	   JMenuBar menumb = new JMenuBar();
  	   JMenu menu1= new JMenu("Opciones");
- 	   JMenuItem reiniciar= new JMenuItem("Reiniciar");
+ 	  
  	   JMenuItem nuevoJuego = new JMenuItem("Nuevo Juego");
            JMenu record = new JMenu("Records");
            JMenuItem recordp= new JMenuItem("Tiempos Principiante");
+           JMenuItem recordi= new JMenuItem("Tiempos Intermedio");
+           JMenuItem recorde= new JMenuItem("Tiempos Experto");
            menu1.add(record);
-           record.add(recordp); 	   
+           record.add(recordp); 
+           record.add(recordi);
+           record.add(recorde);
  	   menumb.add(menu1);
- 	   menu1.add(reiniciar);
+ 	   
  	   principal.setJMenuBar(menumb);
  	      menu1.add(nuevoJuego);
  	   nuevoJuego.addActionListener(new ActionListener() {
@@ -273,6 +282,84 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
                
             }
         });
+           recordi.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                try {
+                    principal.dispose();
+                    JFrame f= new JFrame("TIEMPOS INTERMEDIO");
+                    f.setSize(450, 250);
+                    int count=1;
+                     f.setLocationRelativeTo(null);
+                    f.setDefaultCloseOperation(EXIT_ON_CLOSE);
+                    f.setLayout(new GridLayout(11,1));
+                    File file= new File("intermedio.txt");
+                    file.createNewFile();
+                    String textLine;
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file.getAbsoluteFile()), "ISO-8859-1"));
+                    while ((textLine = reader.readLine())!= null){
+                        JLabel linea= new JLabel(count+"-"+textLine);
+                        
+                        f.add(linea);
+                        count++;
+                    }
+                    JButton volver = new JButton("Volver Inicio");
+                    f.add(volver);
+                    volver.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent ae) {
+                            f.dispose();
+                            Opciones();
+                        }
+                    });
+                    f.setVisible(true);
+                   
+                } catch (IOException ex) {
+                    Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
+                }
+               
+            }
+        });
+           recorde.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent ae) {
+                  try {
+                     principal.dispose();
+                     JFrame f= new JFrame("TIEMPOS EXPERTO");
+                     f.setSize(450, 250);
+                    int count=1;
+                     f.setLocationRelativeTo(null);
+                    f.setDefaultCloseOperation(EXIT_ON_CLOSE);
+                    f.setLayout(new GridLayout(11,1));
+                    File file= new File("experto.txt");
+                    file.createNewFile();
+                    String textLine;
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file.getAbsoluteFile()), "ISO-8859-1"));
+                    while ((textLine = reader.readLine())!= null){
+                        JLabel linea= new JLabel(count+"-"+textLine);
+                        
+                        f.add(linea);
+                        count++;
+                    }
+                    JButton volver = new JButton("Volver Inicio");
+                    f.add(volver);
+                    volver.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent ae) {
+                            f.dispose();
+                            Opciones();
+                        }
+                    });
+                    f.setVisible(true);
+                   
+                } catch (IOException ex) {
+                    Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
+                }
+               
+            
+                  }
+                
+            });
  	   JButton principiante = new JButton("Principiante");
  	   
  	   JButton  intermedio = new JButton("Intermedio");
@@ -315,8 +402,8 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
  				intermedio.setSelected(false);
  				principiante.setSelected(false);
  				personalizado.setSelected(false);
- 				int	n = 16;
- 				int	m = 32;
+ 				int	n = 23;
+ 				int	m = 23;
  				int	nomines = 99;
  				principal.dispose();
  				Buscaminas buscaminas = new Buscaminas(n,m,nomines,"experto");
@@ -334,29 +421,22 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
  				JFrame marco = new JFrame("Personalizado");
                                 
                                 marco.setDefaultCloseOperation(EXIT_ON_CLOSE);
-                                 marco.setSize(350, 250);
+                                 marco.setSize(450, 250);
  				marco.setLayout(new GridLayout(8,4));
                                  marco.setLocationRelativeTo(null);
  				
  				
  				   
- 				JLabel titulo = new JLabel("Inserta las medidas: ");
+ 				JLabel titulo = new JLabel("Inserta las medidas(Solo se permiten filas y columnas iguales): ");
  				marco.add(titulo);
  				
  				
- 				JLabel etN = new JLabel("columnas:");
+ 				JLabel etN = new JLabel("columnas/filas:");
  				etN.setSize(10,10);
  				marco.add(etN);
  				JTextField inN = new JTextField();
  				inN.setBounds(50,135,50,25);
  				marco.add(inN);
- 				
- 				JLabel etM = new JLabel("filas:");
- 				etM.setSize(10,10);
- 				marco.add(etM);
- 				JTextField inM = new JTextField();
- 				inM.setBounds(125,135,50,25);
- 				marco.add(inM);
  				
  				JLabel etMi = new JLabel("minas:");
  				etMi.setSize(10,10);
@@ -376,7 +456,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
 
  		 			public void actionPerformed(ActionEvent e) {
  		 				int	n = Integer.parseInt(inN.getText());
- 		 				int	m = Integer.parseInt(inM.getText());
+ 		 				int	m = Integer.parseInt(inN.getText());
  		 				int	nomines = Integer.parseInt(inMin.getText());
  		 				marco.dispose();
  		 				
