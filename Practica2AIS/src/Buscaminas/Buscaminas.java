@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 
 import javax.swing.*;
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
-public class Buscaminas extends JFrame implements ActionListener, MouseListener{
+public class Buscaminas extends JFrame implements ActionListener, MouseListener, Serializable{
    
     int nomines;
     int newmines;
@@ -35,7 +35,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
     int column;
     int guesses[][];
     JButton b[][];
-    Buscaminas busca;
+    
     int[][] mines;
     boolean allmines;
     int n, m;
@@ -45,8 +45,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
    
     int deltax[] = {-1, 0, 1, -1, 1, -1, 0, 1};
     int deltay[] = {-1, -1, -1, 0, 0, 1, 1, 1};
-    double starttime;
-    double endtime;
+  
    JFrame frame;
    JMenuBar menumb;
    JMenu menu1;
@@ -54,7 +53,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
     JLabel minas,tiempo;
 
     public Buscaminas(int n1, int m1, int num, String lvl){
-        busca=this;
+       
         this.n = n1;
         this.m = m1;
         this.nomines = num;
@@ -104,49 +103,54 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
      cargar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
+                int n,m,nomines,newmines,row,column,mostrartiempo;
+                double starttime;
+                int[][] perm,guesses,mines;
+                String nivel,tmp;
+                JButton [][] b;
+                boolean found;
+                   ObjectInputStream oos = null;
                 try {
-                    /*  ArrayList<Object> ar= new ArrayList<>();
-                    String textLine;
-                    try {
-                    File f= new File("partida.txt");
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(f.getAbsoluteFile()), "ISO-8859-1"));
-                    while ((textLine = reader.readLine())!= null){
-                    ar.add(textLine);
+                   oos = new ObjectInputStream(new FileInputStream("partida.txt"));
+                    
+                    
+                    n= oos.readInt();
+                    m=oos.readInt();
+                    nomines=oos.readInt();
+                    nivel = (String)oos.readObject();
+                    newmines=oos.readInt();
+                   perm=(int[][]) oos.readObject();
+                   tmp= (String) oos.readObject();
+                    found= oos.readBoolean();
+                    row= oos.readInt();
+                    column= oos.readInt();
+                    guesses= (int [][]) oos.readObject();
+                    mines=(int[][]) oos.readObject();
+                    mostrartiempo=oos.readInt();
+                    starttime=oos.readDouble();
+                    
+                    b = new JButton[n][m];
+
+                    for(int i=0;i<n;i++){
+                        for(int j=0;j<m;j++){
+                            b[i][j] =(new JButton((String) oos.readObject()));
+                           
+                        }
                     }
-                    Buscaminas buscaminas = new Buscaminas((int) ar.get(0),(int) ar.get(1), (int) ar.get(2),(String) ar.get(3));
-                    buscaminas.newmines=(int) ar.get(4);
-                    buscaminas.perm=(int[][]) ar.get(5);
-                    buscaminas.tmp=(String) ar.get(6);
-                    buscaminas.found=(boolean) ar.get(7);
-                    buscaminas.row=(int) ar.get(8);
-                    buscaminas.column=(int) ar.get(9);
-                    buscaminas.guesses=(int [][]) ar.get(10);
-                    buscaminas.b=(JButton [][]) ar.get(11);
-                    buscaminas.mines=(int [][]) ar.get(12);
-                    buscaminas.mostrartiempo=(int) ar.get(13);
-                    buscaminas.starttime=(double) ar.get(14);
-                    buscaminas.frame=(JFrame) ar.get(15);
+                    frame.dispose();
+                    new Buscaminas(n,m,nomines,nivel,newmines,perm,tmp,found,row,column,guesses,b,mines,mostrartiempo);
+                    
+                   
+                    
                     } catch (FileNotFoundException ex) {
                     Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (UnsupportedEncodingException ex) {
-                    Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (IOException ex) {
-                    Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    
-                    */
-                    
-                    ObjectInputStream leyendoFichero = new ObjectInputStream( new FileInputStream("partida.txt") );
-                    Buscaminas b = (Buscaminas) leyendoFichero.readObject();
                 } catch (IOException ex) {
                     Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (ClassNotFoundException ex) {
                     Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                
-
-     
             }
+            
         });
      
      nuevoJuego.addActionListener(new ActionListener() {
@@ -161,46 +165,33 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
 
                 ObjectOutputStream oos = null;
                 try {
-                    /*
-                    try {
-                    File f = new File ("partida.txt");
-                    f.createNewFile();
-                    PrintWriter writer = new PrintWriter("partida.txt","UTF-8");
+                   oos = new ObjectOutputStream(new FileOutputStream("partida.txt"));
                     
-                    writer.println(n);
-                    writer.println(m);
-                    writer.println(nomines);
-                    writer.println(nivel);
-                    writer.println(newmines);
-                    writer.println(perm);
-                    writer.println(tmp);
-                    writer.println(found);
+                   oos.writeInt(n);
+                    oos.writeInt(m);
+                   oos.writeInt(nomines);
+                    oos.writeObject(nivel);
+                    oos.writeInt(newmines);
+                    oos.writeObject(perm);
+                    oos.writeObject(tmp);
+                    oos.writeBoolean(found);
+                   oos.writeInt(row);
+                    oos.writeInt(column);
+                    oos.writeObject(guesses);
+                  
+                    oos.writeObject(mines);
+                    oos.writeInt(mostrartiempo);
                     
-                    writer.println(row);
-                    writer.println(column);
-                    writer.println(guesses);
-                    writer.println(b);
-                    writer.println(mines);
-                    writer.println(mostrartiempo);
-                    writer.println(starttime);
-                    writer.println(frame);
-                    writer.close();
-                    
-                    } catch (FileNotFoundException ex) {
-                    Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (UnsupportedEncodingException ex) {
-                    Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (IOException ex) {
-                    Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
+                    for (JButton[] boton : b){
+                        for (JButton boton2 : boton){
+                            oos.writeObject(boton2.getText());
+                            
+                           
+                           
+                        }
                     }
-                    
-                    
-                    */
-                    File f = new File ("partida.txt");
-                    oos = new ObjectOutputStream(new FileOutputStream(f));
-                    oos.writeObject((Object) busca);
-                    oos.close();
-                    
+                   
+               
                 } catch (FileNotFoundException ex) {
                     Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
@@ -216,6 +207,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
             
              
         });
+     
       menumb.add(menu1);
       menu1.add(reiniciar);
       menu1.add(nuevoJuego);
@@ -286,9 +278,220 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
             }
            
         System.out.println("");}
-        starttime = System.nanoTime(); // GUARDA TIEMPO INICIAL
+      
     }//end constructor Mine()
+ public Buscaminas(int n1, int m1, int num, String lvl,int newmines, int[][] perm,String tmp, boolean found, int row, int column, int guesses[][],JButton b[][],int[][] mines,int mt){
+       
+        this.n = n1;
+       this.m = m1;
+        this.nomines = num;
+        this.nivel=lvl;
+        this.newmines=newmines;
+        this.perm=perm;
+        this.tmp=tmp;
+        this.mostrartiempo=mt-1;
+        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        boolean allmines = false;
+        this.guesses = guesses;
+        this.mines = mines;
+        this.b=b;
+        
+   
+      frame= new JFrame("BUSCAMINAS");
+      frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+      menumb = new JMenuBar();
+      menu1= new JMenu("Opciones");
+      reiniciar= new JMenuItem("Reiniciar");
+      nuevoJuego = new JMenuItem("Nuevo Juego");
+      guardar = new JMenuItem("Guardar Partida");
+     cargar = new JMenuItem("Cargar Partida");
+      
+      
+      minas=new JLabel("Minas:"+newmines+" ");
+      tiempo=new JLabel("Tiempo:"+mostrartiempo);
+      timer=new Timer();
+      ttask = new TimerTask(){
+            @Override
+            public void run() {
+               mostrartiempo++;
+                tiempo.setText("Tiempo:"+mostrartiempo);
+            }
+          
+      };
+     
+       timer.schedule(ttask, 0,1000);
+       
+      
+     
+     
+     reiniciar.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent ev) {
+            frame.dispose();
+            new Buscaminas(n,m,nomines,nivel);
+            
+    }
+        });
+     cargar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                int n,m,nomines,newmines,row,column,mostrartiempo;
+                double starttime;
+                int[][] perm,guesses,mines;
+                String nivel,tmp;
+                JButton [][] b;
+                boolean found;
+                   ObjectInputStream oos = null;
+                try {
+                   oos = new ObjectInputStream(new FileInputStream("partida.txt"));
+                    
+                    
+                    n= oos.readInt();
+                    m=oos.readInt();
+                    nomines=oos.readInt();
+                    nivel = (String)oos.readObject();
+                    newmines=oos.readInt();
+                   perm=(int[][]) oos.readObject();
+                   tmp= (String) oos.readObject();
+                    found= oos.readBoolean();
+                    row= oos.readInt();
+                    column= oos.readInt();
+                    guesses= (int [][]) oos.readObject();
+                    mines=(int[][]) oos.readObject();
+                    mostrartiempo=oos.readInt();
+                    starttime=oos.readDouble();
+                    
+                    b = new JButton[n][m];
+
+                    for(int i=0;i<n;i++){
+                        for(int j=0;j<m;j++){
+                            b[i][j] =(new JButton((String) oos.readObject()));
+                           
+                        }
+                    }
+                    frame.dispose();
+                    new Buscaminas(n,m,nomines,nivel,newmines,perm,tmp,found,row,column,guesses,b,mines,mostrartiempo);
+                    
+                    } catch (FileNotFoundException ex) {
+                    Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            
+        });
+     
+     nuevoJuego.addActionListener(new ActionListener() {
+ 	        public void actionPerformed(ActionEvent ev) {
+ 	            frame.dispose();
+ 	            Opciones();
+ 	    }
+ 	   });
+     guardar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+
+                ObjectOutputStream oos = null;
+                try {
+                   oos = new ObjectOutputStream(new FileOutputStream("partida.txt"));
+                    
+                   oos.writeInt(n);
+                    oos.writeInt(m);
+                   oos.writeInt(nomines);
+                    oos.writeObject(nivel);
+                    oos.writeInt(newmines);
+                    oos.writeObject(perm);
+                    oos.writeObject(tmp);
+                    oos.writeBoolean(found);
+                   oos.writeInt(row);
+                    oos.writeInt(column);
+                    oos.writeObject(guesses);
+                  
+                    oos.writeObject(mines);
+                    oos.writeInt(mostrartiempo);
+                    
+                    for (JButton[] boton : b){
+                        for (JButton boton2 : boton){
+                            oos.writeObject(boton2.getText());
+                            
+                           
+                           
+                        }
+                    }
+                   
+               
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
+                } finally {
+                    try {
+                        oos.close();
+                    } catch (IOException ex) {
+                        Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+            
+             
+        });
+     
+      menumb.add(menu1);
+      menu1.add(reiniciar);
+      menu1.add(nuevoJuego);
+      frame.setJMenuBar(menumb);
+      menumb.add(minas);
+       menumb.add(tiempo);
+       menu1.add(guardar);
+       menu1.add(cargar);
+        frame.setLayout(new GridLayout(n,m));
+        
+       
+        
+        for (int y = 0;y<m;y++){
+            for (int x = 0;x<n;x++){
  
+                b[x][y].addActionListener(this);
+                b[x][y].addMouseListener(this);
+                if(b[x][y].getText().equals("x"))
+                    b[x][y].setBackground(Color.orange);
+                if(b[x][y].getText().equals("1"))
+                     b[x][y].setEnabled(false);
+                 if(b[x][y].getText().equals("2"))
+                     b[x][y].setEnabled(false);
+                  if(b[x][y].getText().equals("3"))
+                     b[x][y].setEnabled(false);
+                   if(b[x][y].getText().equals("4"))
+                     b[x][y].setEnabled(false);
+                    if(b[x][y].getText().equals("5"))
+                     b[x][y].setEnabled(false);
+                     if(b[x][y].getText().equals("6"))
+                     b[x][y].setEnabled(false);
+                      if(b[x][y].getText().equals("7"))
+                     b[x][y].setEnabled(false);
+                       if(b[x][y].getText().equals("8"))
+                     b[x][y].setEnabled(false);
+               
+               frame.add(b[x][y]);
+                if(b[x][y].getText().equals(" "))
+                    b[x][y].setEnabled(false);
+                
+                
+            }//end inner for
+        }//end for
+        frame.setLocationRelativeTo(null);
+        frame.pack();
+        frame.setVisible(true);
+        
+        for (int y = 0;y<m+2;y++){
+            for (int x = 0;x<n+2;x++){
+                System.out.print(mines[x][y]);
+            }
+           
+        System.out.println("");}
+        
+    }//end constructor Mine()
         public static void Opciones() {
  	   
  	   JFrame principal = new JFrame("BUSCAMINAS");
@@ -304,12 +507,66 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
            JMenuItem recordp= new JMenuItem("Tiempos Principiante");
            JMenuItem recordi= new JMenuItem("Tiempos Intermedio");
            JMenuItem recorde= new JMenuItem("Tiempos Experto");
+           JMenuItem cargarp= new JMenuItem("CargarPartida");
+           menu1.add(cargarp);
            menu1.add(record);
            record.add(recordp); 
            record.add(recordi);
            record.add(recorde);
  	   menumb.add(menu1);
- 	   
+ 	   cargarp.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent ae) {
+                   int n,m,nomines,newmines,row,column,mostrartiempo;
+                double starttime;
+                int[][] perm,guesses,mines;
+                String nivel,tmp;
+                JButton [][] b;
+                boolean found;
+                   ObjectInputStream oos = null;
+                try {
+                   oos = new ObjectInputStream(new FileInputStream("partida.txt"));
+                    
+                    
+                    n= oos.readInt();
+                    m=oos.readInt();
+                    nomines=oos.readInt();
+                    nivel = (String)oos.readObject();
+                    newmines=oos.readInt();
+                   perm=(int[][]) oos.readObject();
+                   tmp= (String) oos.readObject();
+                    found= oos.readBoolean();
+                    row= oos.readInt();
+                    column= oos.readInt();
+                    guesses= (int [][]) oos.readObject();
+                    mines=(int[][]) oos.readObject();
+                    mostrartiempo=oos.readInt();
+                    starttime=oos.readDouble();
+                    
+                    b = new JButton[n][m];
+
+                    for(int i=0;i<n;i++){
+                        for(int j=0;j<m;j++){
+                            b[i][j] =(new JButton((String) oos.readObject()));
+                           
+                        }
+                    }
+                    principal.dispose();
+                    new Buscaminas(n,m,nomines,nivel,newmines,perm,tmp,found,row,column,guesses,b,mines,mostrartiempo);
+                    
+                   
+                    
+                    } catch (FileNotFoundException ex) {
+                    Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+           
+                
+            });
  	   principal.setJMenuBar(menumb);
  	      menu1.add(nuevoJuego);
  	   nuevoJuego.addActionListener(new ActionListener() {
@@ -611,15 +868,15 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
             }}
         if (check == nomines){
             timer.cancel();
-            endtime = System.nanoTime();// TIEMPO FINAL
+           
             Component temporaryLostComponent = null;
             if(!nivel.equals("personalizado")){
             if (checkFichero()){
 
-              String name =JOptionPane.showInputDialog(temporaryLostComponent, "Congratulations you won!!! It took you "+(int)((endtime-starttime)/1000000000)+" seconds!\n You got a new record in this level. Insert a player name if you want to save your time, press cancel if you dont want to save it.\n");
+              String name =JOptionPane.showInputDialog(temporaryLostComponent, "Congratulations you won!!! It took you "+mostrartiempo+" seconds!\n You got a new record in this level. Insert a player name if you want to save your time, press cancel if you dont want to save it.\n");
               if(name!=null){
                 while (name.contains(" ")){
-                    name=JOptionPane.showInputDialog(temporaryLostComponent, "Congratulations you won!!! It took you "+(int)((endtime-starttime)/1000000000)+" seconds!\n You got a new record in this level. Insert a player name if you want to save your time, press cancel if you dont want to save it.\n(Whitespace are forbbiden)");
+                    name=JOptionPane.showInputDialog(temporaryLostComponent, "Congratulations you won!!! It took you "+mostrartiempo+" seconds!\n You got a new record in this level. Insert a player name if you want to save your time, press cancel if you dont want to save it.\n(Whitespace are forbbiden)");
                     if(name==null)
                         break;
                 }
@@ -628,10 +885,10 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
               }
             }
             else{
-                JOptionPane.showMessageDialog(temporaryLostComponent, "Congratulations you won!!! It took you "+(int)((endtime-starttime)/1000000000)+" seconds!");
+                JOptionPane.showMessageDialog(temporaryLostComponent, "Congratulations you won!!! It took you "+mostrartiempo+" seconds!");
             }
             }else{
-                 JOptionPane.showMessageDialog(temporaryLostComponent, "Congratulations you won!!! It took you "+(int)((endtime-starttime)/1000000000)+" seconds!");
+                 JOptionPane.showMessageDialog(temporaryLostComponent, "Congratulations you won!!! It took you "+mostrartiempo+" seconds!");
             }
         }
     }
