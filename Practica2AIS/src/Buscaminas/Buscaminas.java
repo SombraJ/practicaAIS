@@ -6,9 +6,14 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.TimerTask;
@@ -30,7 +35,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
     int column;
     int guesses[][];
     JButton b[][];
-    
+    Buscaminas busca;
     int[][] mines;
     boolean allmines;
     int n, m;
@@ -45,10 +50,11 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
    JFrame frame;
    JMenuBar menumb;
    JMenu menu1;
-   JMenuItem reiniciar,nuevoJuego,guardar;
+   JMenuItem reiniciar,nuevoJuego,guardar,cargar;
     JLabel minas,tiempo;
 
     public Buscaminas(int n1, int m1, int num, String lvl){
+        busca=this;
         this.n = n1;
         this.m = m1;
         this.nomines = num;
@@ -68,7 +74,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
       reiniciar= new JMenuItem("Reiniciar");
       nuevoJuego = new JMenuItem("Nuevo Juego");
       guardar = new JMenuItem("Guardar Partida");
-     
+     cargar = new JMenuItem("Cargar Partida");
       
       newmines=nomines;
       minas=new JLabel("Minas:"+newmines+" ");
@@ -95,6 +101,53 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
             
     }
         });
+     cargar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                try {
+                    /*  ArrayList<Object> ar= new ArrayList<>();
+                    String textLine;
+                    try {
+                    File f= new File("partida.txt");
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(f.getAbsoluteFile()), "ISO-8859-1"));
+                    while ((textLine = reader.readLine())!= null){
+                    ar.add(textLine);
+                    }
+                    Buscaminas buscaminas = new Buscaminas((int) ar.get(0),(int) ar.get(1), (int) ar.get(2),(String) ar.get(3));
+                    buscaminas.newmines=(int) ar.get(4);
+                    buscaminas.perm=(int[][]) ar.get(5);
+                    buscaminas.tmp=(String) ar.get(6);
+                    buscaminas.found=(boolean) ar.get(7);
+                    buscaminas.row=(int) ar.get(8);
+                    buscaminas.column=(int) ar.get(9);
+                    buscaminas.guesses=(int [][]) ar.get(10);
+                    buscaminas.b=(JButton [][]) ar.get(11);
+                    buscaminas.mines=(int [][]) ar.get(12);
+                    buscaminas.mostrartiempo=(int) ar.get(13);
+                    buscaminas.starttime=(double) ar.get(14);
+                    buscaminas.frame=(JFrame) ar.get(15);
+                    } catch (FileNotFoundException ex) {
+                    Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (UnsupportedEncodingException ex) {
+                    Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                    Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                    */
+                    
+                    ObjectInputStream leyendoFichero = new ObjectInputStream( new FileInputStream("partida.txt") );
+                    Buscaminas b = (Buscaminas) leyendoFichero.readObject();
+                } catch (IOException ex) {
+                    Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+
+     
+            }
+        });
      
      nuevoJuego.addActionListener(new ActionListener() {
  	        public void actionPerformed(ActionEvent ev) {
@@ -105,43 +158,63 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
      guardar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-              
+
+                ObjectOutputStream oos = null;
                 try {
+                    /*
+                    try {
                     File f = new File ("partida.txt");
                     f.createNewFile();
                     PrintWriter writer = new PrintWriter("partida.txt","UTF-8");
+                    
+                    writer.println(n);
+                    writer.println(m);
                     writer.println(nomines);
+                    writer.println(nivel);
                     writer.println(newmines);
                     writer.println(perm);
                     writer.println(tmp);
                     writer.println(found);
-                    writer.println(nivel);
+                    
                     writer.println(row);
                     writer.println(column);
                     writer.println(guesses);
                     writer.println(b);
                     writer.println(mines);
-                    writer.println(n);
-                    writer.println(m);
-                    writer.println(timer);
-                    writer.println(ttask);
+                    writer.println(mostrartiempo);
                     writer.println(starttime);
-                    writer.println(endtime);
                     writer.println(frame);
                     writer.close();
-
-                } catch (FileNotFoundException ex) {
+                    
+                    } catch (FileNotFoundException ex) {
                     Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (UnsupportedEncodingException ex) {
+                    } catch (UnsupportedEncodingException ex) {
+                    Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                    Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                    
+                    */
+                    File f = new File ("partida.txt");
+                    oos = new ObjectOutputStream(new FileOutputStream(f));
+                    oos.writeObject((Object) busca);
+                    oos.close();
+                    
+                } catch (FileNotFoundException ex) {
                     Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
                     Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
+                } finally {
+                    try {
+                        oos.close();
+                    } catch (IOException ex) {
+                        Logger.getLogger(Buscaminas.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
-                   
-                    
-                
             }
             
+             
         });
       menumb.add(menu1);
       menu1.add(reiniciar);
@@ -150,6 +223,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
       menumb.add(minas);
        menumb.add(tiempo);
        menu1.add(guardar);
+       menu1.add(cargar);
         frame.setLayout(new GridLayout(n,m));
         
         for (int y = 0;y<m+2;y++){
